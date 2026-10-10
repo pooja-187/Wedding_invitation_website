@@ -228,6 +228,7 @@ function useSlideImages(slides: Slide[]): string[] {
 }
 
 type LayerProps = {
+  from: string
   to: string
   x: number
   y: number
@@ -239,84 +240,49 @@ type LayerProps = {
   onDone: () => void
 }
 
-function Layer({ to, x, y, w, h, duration, onDone }: LayerProps) {
+// The blot: white circles under a turbulence displacement make a ragged
+// mask; the next picture shows through it while the circles grow.
+function Layer({ to, x, y, w, h, duration, opts, onDone }: LayerProps) {
   const id = "ink" + React.useId().replace(/[^a-zA-Z0-9]/g, "")
   const circles = React.useRef([] as (SVGCircleElement | null)[])
   const done = React.useRef(onDone)
   done.current = onDone
-
-  const R = reach(x, y, w, h) * 1.35
-  const parts = React.useMemo(() => {
-    const seed = Math.round(x * 11 + y * 17)
-    return [[0, 0, 1] as [number, number, number]].concat(drops(seed, 14))
-  }, [x, y])
-
+  const parts = React.useMemo(() => [[0, 0, 1] as [number, number, number]].concat(drops(Math.round(x * 7 + y * 13), 7)), [x, y])
   React.useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    const R = reach(x, y, w, h) * 1.3
     const D = reduce ? 300 : duration
     const t0 = performance.now()
     let raf = 0
-    let finished = false
-
-    const finish = () => {
-      if (!finished) {
-        finished = true
-        done.current()
-      }
-    }
-
     const step = (now: number) => {
       const t = Math.min(1, (now - t0) / D)
       const e = reduce ? 1 : easeInOut(t)
-      for (let i = 0; i < parts.length; i++) {
-        const el = circles.current[i]
-        if (!el) continue
-        const p = parts[i]
-        const rVal = i === 0 ? R * e : R * Math.max(0, (e - 0.06) / 0.94) * p[2] * 1.45
-        el.setAttribute("r", rVal.toFixed(1))
-      }
-      if (t < 1) {
-        raf = requestAnimationFrame(step)
-      } else {
-        finish()
-      }
+      parts.forEach((p, i) => circles.current[i]?.setAttribute("r", String(R * e * (i ? p[2] * 1.6 : 1))))
+      if (t < 1) raf = requestAnimationFrame(step)
+      else done.current()
     }
-
     raf = requestAnimationFrame(step)
-    const safety = setTimeout(finish, D + 60)
-    return () => {
-      cancelAnimationFrame(raf)
-      clearTimeout(safety)
-    }
-  }, [R, duration, parts])
-
+    return () => cancelAnimationFrame(raf)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
   return (
-    <svg className="ib-in" viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" aria-hidden="true">
+    <svg className="ib-in" viewBox={"0 0 " + w + " " + h} preserveAspectRatio="none" aria-hidden="true">
       <defs>
-        <mask id={id} maskUnits="userSpaceOnUse" x={0} y={0} width={w} height={h}>
+        <filter id={id + "f"} x="-25%" y="-25%" width="150%" height="150%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves={3} seed={3} />
+          <feDisplacementMap in="SourceGraphic" scale={opts.bleed ?? 90} xChannelSelector="R" yChannelSelector="G" />
+          <feGaussianBlur stdDeviation={1.5} />
+        </filter>
+        <mask id={id + "m"} maskUnits="userSpaceOnUse" x={0} y={0} width={w} height={h}>
           <rect width={w} height={h} fill="black" />
-          <g fill="white">
+          <g filter={"url(#" + id + "f)"}>
             {parts.map((p, i) => (
-              <circle
-                key={i}
-                ref={(el) => void (circles.current[i] = el)}
-                cx={x + p[0]}
-                cy={y + p[1]}
-                r={0}
-              />
+              <circle key={i} ref={(el) => void (circles.current[i] = el)} cx={x + p[0]} cy={y + p[1]} r={0} fill="white" />
             ))}
           </g>
         </mask>
       </defs>
-      <image
-        href={to}
-        x={0}
-        y={0}
-        width={w}
-        height={h}
-        preserveAspectRatio="xMidYMid slice"
-        mask={`url(#${id})`}
-      />
+      <image href={to} x={0} y={0} width={w} height={h} preserveAspectRatio="xMidYMid slice" mask={"url(#" + id + "m)"} />
     </svg>
   )
 }
@@ -326,8 +292,8 @@ const IB_CSS = [
   ".ib-root:focus-visible{box-shadow:inset 0 0 0 2px var(--ib-ink)}",
   ".ib-base{position:absolute;inset:0}",
   ".ib-img{position:absolute;inset:0;width:100%;height:100%;max-width:none;object-fit:cover;display:block;pointer-events:none}",
-  ".ib-in{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;overflow:hidden;will-change:transform}",
-  ".ib-shade{position:absolute;inset:auto 0 0 0;height:46%;background:linear-gradient(to top,rgba(0,0,0,.65),rgba(0,0,0,0));pointer-events:none}",
+  ".ib-in{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;overflow:hidden}",
+  ".ib-shade{position:absolute;inset:auto 0 0 0;height:46%;background:linear-gradient(to top,rgba(0,0,0,.6),rgba(0,0,0,0));pointer-events:none}",
   ".ib-text{position:absolute;left:clamp(20px,4vw,56px);bottom:clamp(44px,8vh,80px);right:clamp(140px,20vw,280px);pointer-events:none}",
   ".ib-line{display:block;overflow:hidden;padding-bottom:.08em}",
   ".ib-line>span{display:block;animation:ib-rise .9s cubic-bezier(.2,.8,.2,1) both}",
@@ -352,9 +318,9 @@ const IB_CSS = [
 export default function InkBlotCarousel({
   slides = DEFAULT_SLIDES,
   height = "100svh",
-  duration = 1000,
-  bleed = 45,
-  autoplay = 4500,
+  duration = 1400,
+  bleed = 90,
+  autoplay = 2000,
   ink = "#ffffff",
   onChange,
   className,
@@ -366,53 +332,34 @@ export default function InkBlotCarousel({
   const srcs = useSlideImages(slides)
   const [index, setIndex] = React.useState(0)
   const [incoming, setIncoming] = React.useState(null as null | { to: number; dir: number; x: number; y: number; w: number; h: number; id: number })
-  const incomingRef = React.useRef(incoming)
-  incomingRef.current = incoming
   const [paused, setPaused] = React.useState(false)
   const rootRef = React.useRef(null as HTMLDivElement | null)
   const down = React.useRef(null as null | { x: number; y: number })
   const seq = React.useRef(0)
 
-  const go = React.useCallback((dir: number, px?: number, py?: number) => {
+  const go = (dir: number, px?: number, py?: number) => {
     const root = rootRef.current
-    if (!root || incomingRef.current || n < 2) return
+    if (!root || incoming || n < 2) return
     const w = root.clientWidth
     const h = root.clientHeight
     seq.current += 1
     const [dx, dy] = defaultOrigin(dir, w, h, (seq.current * 0.618) % 1)
     setIncoming({ to: wrap(index + dir, n), dir, x: px ?? dx, y: py ?? dy, w, h, id: Date.now() })
-  }, [index, n])
-
-  const commit = React.useCallback(() => {
-    setIncoming((prev) => {
-      if (!prev) return null
-      setIndex(prev.to)
-      return null
-    })
-  }, [])
+  }
+  const commit = () => {
+    if (!incoming) return
+    setIndex(incoming.to)
+    setIncoming(null)
+  }
 
   React.useEffect(() => {
     onChange?.(index)
   }, [index, onChange])
 
-  // state-safe autoplay timer
-  React.useEffect(() => {
-    if (paused || autoplay <= 0 || n < 2) return
-    const timer = setInterval(() => {
-      if (!incomingRef.current) {
-        go(1)
-      }
-    }, autoplay)
-    return () => clearInterval(timer)
-  }, [paused, autoplay, n, go])
-
   // warm the cache so a tap starts its transition at once
   React.useEffect(() => {
     srcs.forEach((src) => {
-      if (src) {
-        const img = new Image()
-        img.src = src
-      }
+      if (src) new Image().src = src
     })
   }, [srcs.join("|")]) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -474,9 +421,10 @@ export default function InkBlotCarousel({
       <div className="ib-base">
         {srcs[index] ? <img className="ib-img" src={srcs[index]} alt={slides[index]?.alt || slides[index]?.title || ""} draggable={false} /> : null}
       </div>
-      {incoming && srcs[incoming.to] ? (
+      {incoming && srcs[index] && srcs[incoming.to] ? (
         <Layer
           key={incoming.id}
+          from={srcs[index]}
           to={srcs[incoming.to]}
           x={incoming.x}
           y={incoming.y}
@@ -517,7 +465,7 @@ export default function InkBlotCarousel({
         </button>
       </div>
       <div className="ib-track" aria-hidden="true">
-        <div key={"f" + index} className="ib-fill" data-run={autoplay > 0 && n > 1 && !incoming ? "1" : "0"} />
+        <div key={"f" + index} className="ib-fill" data-run={autoplay > 0 && n > 1 && !incoming ? "1" : "0"} onAnimationEnd={() => go(1)} />
       </div>
       <div className="ib-sr" aria-live="polite">
         {"Slide " + (shown + 1) + " of " + n + (s.title ? ": " + s.title : "")}
