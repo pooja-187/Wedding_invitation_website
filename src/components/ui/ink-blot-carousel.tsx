@@ -240,8 +240,6 @@ type LayerProps = {
   onDone: () => void
 }
 
-// The blot: white circles under a turbulence displacement make a ragged
-// mask; the next picture shows through it while the circles grow.
 function Layer({ to, x, y, w, h, duration, opts, onDone }: LayerProps) {
   const id = "ink" + React.useId().replace(/[^a-zA-Z0-9]/g, "")
   const circles = React.useRef([] as (SVGCircleElement | null)[])
@@ -254,24 +252,35 @@ function Layer({ to, x, y, w, h, duration, opts, onDone }: LayerProps) {
     const D = reduce ? 300 : duration
     const t0 = performance.now()
     let raf = 0
+    let finished = false
+    const finish = () => {
+      if (!finished) {
+        finished = true
+        done.current()
+      }
+    }
     const step = (now: number) => {
       const t = Math.min(1, (now - t0) / D)
       const e = reduce ? 1 : easeInOut(t)
       parts.forEach((p, i) => circles.current[i]?.setAttribute("r", String(R * e * (i ? p[2] * 1.6 : 1))))
       if (t < 1) raf = requestAnimationFrame(step)
-      else done.current()
+      else finish()
     }
     raf = requestAnimationFrame(step)
-    return () => cancelAnimationFrame(raf)
+    const safety = setTimeout(finish, D + 80)
+    return () => {
+      cancelAnimationFrame(raf)
+      clearTimeout(safety)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   return (
     <svg className="ib-in" viewBox={"0 0 " + w + " " + h} preserveAspectRatio="none" aria-hidden="true">
       <defs>
-        <filter id={id + "f"} x="-25%" y="-25%" width="150%" height="150%">
-          <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves={3} seed={3} />
-          <feDisplacementMap in="SourceGraphic" scale={opts.bleed ?? 90} xChannelSelector="R" yChannelSelector="G" />
-          <feGaussianBlur stdDeviation={1.5} />
+        <filter id={id + "f"} x="-20%" y="-20%" width="140%" height="140%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves={w < 768 ? 2 : 3} seed={3} />
+          <feDisplacementMap in="SourceGraphic" scale={w < 768 ? 55 : (opts.bleed ?? 90)} xChannelSelector="R" yChannelSelector="G" />
+          <feGaussianBlur stdDeviation={1} />
         </filter>
         <mask id={id + "m"} maskUnits="userSpaceOnUse" x={0} y={0} width={w} height={h}>
           <rect width={w} height={h} fill="black" />
@@ -332,25 +341,39 @@ export default function InkBlotCarousel({
   const srcs = useSlideImages(slides)
   const [index, setIndex] = React.useState(0)
   const [incoming, setIncoming] = React.useState(null as null | { to: number; dir: number; x: number; y: number; w: number; h: number; id: number })
+  const incomingRef = React.useRef(incoming)
+  incomingRef.current = incoming
   const [paused, setPaused] = React.useState(false)
   const rootRef = React.useRef(null as HTMLDivElement | null)
   const down = React.useRef(null as null | { x: number; y: number })
   const seq = React.useRef(0)
 
-  const go = (dir: number, px?: number, py?: number) => {
+  const go = React.useCallback((dir: number, px?: number, py?: number) => {
     const root = rootRef.current
-    if (!root || incoming || n < 2) return
+    if (!root || incomingRef.current || n < 2) return
     const w = root.clientWidth
     const h = root.clientHeight
     seq.current += 1
     const [dx, dy] = defaultOrigin(dir, w, h, (seq.current * 0.618) % 1)
     setIncoming({ to: wrap(index + dir, n), dir, x: px ?? dx, y: py ?? dy, w, h, id: Date.now() })
-  }
-  const commit = () => {
+  }, [index, n])
+
+  const commit = React.useCallback(() => {
+    setIncoming((prev) => {
+      if (!prev) return null
+      setIndex(prev.to)
+      return null
+    })
+  }, [])
+
+  // Safety fallback: ensure incoming state always clears
+  React.useEffect(() => {
     if (!incoming) return
-    setIndex(incoming.to)
-    setIncoming(null)
-  }
+    const fallback = setTimeout(() => {
+      commit()
+    }, duration + 300)
+    return () => clearTimeout(fallback)
+  }, [incoming, duration, commit])
 
   React.useEffect(() => {
     onChange?.(index)
@@ -416,6 +439,7 @@ export default function InkBlotCarousel({
       onKeyDown={onKey}
       onPointerDown={onDown}
       onPointerUp={onUp}
+      onPointerCancel={() => { down.current = null }}
     >
       <style>{IB_CSS}</style>
       <div className="ib-base">
