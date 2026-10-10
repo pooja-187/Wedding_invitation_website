@@ -1354,15 +1354,24 @@ export default function LycorisSpecimen({
           ))}
         </nav>
 
-        {/* grain, static — warm printed paper texture */}
-        <svg aria-hidden className="pointer-events-none absolute inset-0" width="100%" height="100%" style={{ opacity: 0.06, mixBlendMode: "multiply" }}>
-          <filter id="lys-grain">
-            <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves={2} stitchTiles="stitch" />
-            <feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.55 0" />
-          </filter>
-          <rect width="100%" height="100%" filter="url(#lys-grain)" />
-        </svg>
+        {/* Soft feather gradient blend into next section */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute left-0 right-0 bottom-0 h-28 md:h-44 z-20"
+          style={{
+            background: "linear-gradient(to bottom, rgba(248, 243, 233, 0) 0%, rgba(248, 243, 233, 0.7) 60%, #F8F3E9 100%)",
+          }}
+        />
       </div>
+
+      {/* Seamless transition overlap into the following section */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-0 right-0 -bottom-6 h-28 z-10"
+        style={{
+          background: "linear-gradient(to bottom, transparent 0%, #F8F3E9 100%)",
+        }}
+      />
     </section>
   )
 }
