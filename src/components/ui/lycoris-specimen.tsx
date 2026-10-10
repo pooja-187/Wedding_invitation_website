@@ -614,7 +614,8 @@ const CSS =
   ".lys-wide{display:block}.lys-tall{display:none}" +
   "@container lys (orientation: portrait){.lys-wide{display:none}.lys-tall{display:block}" +
   ".lys-bloom{left:7cqw!important;top:auto!important;bottom:13cqh}" +
-  ".lys-fin{flex-direction:column!important;gap:4cqh!important;top:44cqh!important}" +
+  ".lys-fin{flex-direction:column!important;gap:3.5cqh!important;top:44cqh!important}" +
+  ".lys-fin-venue{text-align:center!important}" +
   ".lys-spec{grid-template-columns:1fr 1fr!important}.lys-spec-mid{display:none!important}}" +
   "@container lys (max-width: 720px){.lys-hide-sm{display:none!important}}" +
   "@container lys (max-width: 1020px){.lys-hide-md{display:none!important}}" +
@@ -1323,7 +1324,7 @@ export default function LycorisSpecimen({
               </div>
             </div>
 
-            <div className="pointer-events-auto relative text-right">
+            <div className="lys-fin-venue pointer-events-auto relative text-center md:text-right">
               <div {...sc(5, "fade", 0.3)} style={{ ...sans, ...hidden, fontSize: "clamp(9px, 0.9cqw, 12px)", letterSpacing: "0.2em", textTransform: "uppercase", color: taupe }}>
                 Venue & Location
               </div>
