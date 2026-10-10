@@ -1333,7 +1333,7 @@ export default function LycorisSpecimen({
             </div>
           </div>
 
-          <div {...sc(5, "rise", 0.75)} className="pointer-events-auto absolute flex items-center justify-between gap-4" style={{ ...sans, ...hidden, left: "5cqw", right: "5cqw", bottom: "4.5cqh", fontSize: "clamp(10px, 1.3cqw, 16px)", letterSpacing: "0.12em", textTransform: "uppercase", color: bone }}>
+          <div {...sc(5, "rise", 0.75)} className="pointer-events-auto absolute flex items-center justify-between gap-4 z-30" style={{ ...sans, ...hidden, left: "5cqw", right: "5cqw", bottom: "4.5cqh", fontSize: "clamp(10px, 1.3cqw, 16px)", letterSpacing: "0.12em", textTransform: "uppercase", color: bone }}>
             <span>{name}</span>
             <Mark color={crimson} accent={bone} />
             <span>{rsvp}</span>
@@ -1343,7 +1343,7 @@ export default function LycorisSpecimen({
         {/* ================================== nav ================================== */}
         <nav
           aria-label="Invitation sections"
-          className="lys-nav lys-hide-sm absolute flex flex-col items-end"
+          className="lys-nav lys-hide-sm absolute flex flex-col items-end z-30"
           style={{ ...sans, color: taupe, right: "2cqw", top: "50%", transform: "translateY(-50%)", fontSize: 9, letterSpacing: "0.2em", textTransform: "uppercase" }}
         >
           {NAV.map((n, i) => (
@@ -1353,25 +1353,7 @@ export default function LycorisSpecimen({
             </button>
           ))}
         </nav>
-
-        {/* Soft feather gradient blend into next section */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute left-0 right-0 bottom-0 h-28 md:h-44 z-20"
-          style={{
-            background: "linear-gradient(to bottom, rgba(248, 243, 233, 0) 0%, rgba(248, 243, 233, 0.7) 60%, #F8F3E9 100%)",
-          }}
-        />
       </div>
-
-      {/* Seamless transition overlap into the following section */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute left-0 right-0 -bottom-6 h-28 z-10"
-        style={{
-          background: "linear-gradient(to bottom, transparent 0%, #F8F3E9 100%)",
-        }}
-      />
     </section>
   )
 }

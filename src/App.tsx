@@ -25,8 +25,8 @@ export default function App() {
         />
       </section>
 
-      {/* Decorative Transition Spacing */}
-      <div className="w-full pt-8 pb-2 md:pt-12 md:pb-4 flex items-center justify-center bg-[#F8F3E9]">
+      {/* Decorative Transition Spacing: Smooth Gradient Blend Below Footer */}
+      <div className="w-full pt-10 pb-4 md:pt-14 md:pb-6 flex items-center justify-center bg-gradient-to-b from-[#F2ECE0] via-[#F8F3E9] to-[#F8F3E9]">
         <div className="w-20 md:w-32 h-px bg-[#D5C6AC]/80" />
         <div className="mx-4 text-[#800D28] text-xs tracking-[0.35em] uppercase font-serif">❖ ❖ ❖</div>
         <div className="w-20 md:w-32 h-px bg-[#D5C6AC]/80" />
