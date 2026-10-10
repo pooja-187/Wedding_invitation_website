@@ -508,9 +508,6 @@ export default function InkBlotCarousel({
         ) : null}
       </div>
       <div className="ib-nav" onPointerDown={stop} onPointerUp={stop}>
-        <span className="ib-count" aria-hidden="true">
-          {pad2(shown + 1)} / {pad2(n)}
-        </span>
         <button type="button" className="ib-btn" aria-label="Previous" onClick={() => go(-1)}>
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
             <path d="M10 3 5 8l5 5" stroke="currentColor" strokeWidth="1.4" />
@@ -521,9 +518,6 @@ export default function InkBlotCarousel({
             <path d="m6 3 5 5-5 5" stroke="currentColor" strokeWidth="1.4" />
           </svg>
         </button>
-      </div>
-      <div className="ib-track" aria-hidden="true">
-        <div key={"f" + index} className="ib-fill" data-run={autoplay > 0 && n > 1 && !incoming ? "1" : "0"} onAnimationEnd={() => go(1)} />
       </div>
       <div className="ib-sr" aria-live="polite">
         {"Slide " + (shown + 1) + " of " + n + (s.title ? ": " + s.title : "")}
