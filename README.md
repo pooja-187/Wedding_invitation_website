@@ -1,6 +1,10 @@
 # Alisha & Alex · Kerala Wedding Invitation
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Vercel-black?style=for-the-badge&logo=vercel)](https://qyvera-wedding-invitation.vercel.app/)
+
 An elegant, luxury **Kerala Indian Wedding Invitation** web experience for **Alisha & Alex**, built with **React 19**, **TypeScript**, **Vite 8**, **Tailwind CSS 3**, and custom **WebGL / GLSL** procedural animations.
+
+🌐 **Live URL**: [https://qyvera-wedding-invitation.vercel.app/](https://qyvera-wedding-invitation.vercel.app/)
 
 ---
 
