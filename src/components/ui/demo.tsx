@@ -5,38 +5,28 @@ import InkBlotCarousel from "@/components/ui/ink-blot-carousel"
 export default function DemoPhotos() {
   return (
     <InkBlotCarousel
-      autoplay={2000}
+      autoplay={2600}
       duration={1400}
       slides={[
         {
-          image: "/images/couple/couple-4.jpg",
-          title: "Backwater Serenity",
-          caption: "Golden hour sunset by the tranquil waters of Kumarakom.",
+          image: "/images/couple/beach-sitting.jpg",
+          title: "Shoreline Whispers",
+          caption: "Tender moments by the tranquil waves of the Kerala coast.",
         },
         {
-          image: "/images/couple/couple-2.jpg",
-          title: "Golden Moments",
-          caption: "Tender connection under the warm Kerala evening glow.",
+          image: "/images/couple/beach-lift.png",
+          title: "Joy & Laughter",
+          caption: "Unfiltered joy and pure celebration of our love.",
         },
         {
-          image: "/images/couple/couple-3.jpg",
-          title: "Golden Hour Dance",
-          caption: "Twirling freely beneath the radiant sunset rays.",
+          image: "/images/couple/beach-portrait-bw.png",
+          title: "Timeless Devotion",
+          caption: "An embrace of quiet grace and enduring promises.",
         },
         {
-          image: "/images/couple/couple-5.jpg",
-          title: "Sunlit Meadow",
-          caption: "Joy and laughter in the sun-drenched flower fields.",
-        },
-        {
-          image: "/images/couple/couple-1.jpg",
-          title: "Hand in Hand",
-          caption: "Walking together towards forever in love.",
-        },
-        {
-          image: "/images/couple/couple-4.jpg",
-          title: "Alisha & Alex",
-          caption: "Celebrating our new journey in God's Own Country.",
+          image: "/images/couple/beach-ring-hands.png",
+          title: "Forever Begins",
+          caption: "Hand in hand, stepping into a lifetime of togetherness.",
         },
       ]}
     />
