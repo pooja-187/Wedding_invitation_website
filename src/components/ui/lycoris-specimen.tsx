@@ -616,7 +616,11 @@ const CSS =
   ".lys-bloom{left:7cqw!important;top:auto!important;bottom:13cqh}" +
   ".lys-fin{flex-direction:column!important;gap:3.5cqh!important;top:44cqh!important}" +
   ".lys-fin-venue{text-align:center!important}" +
-  ".lys-spec{grid-template-columns:1fr 1fr!important}.lys-spec-mid{display:none!important}}" +
+  ".lys-spec{display:flex!important;flex-direction:column!important;align-items:center!important;text-align:center!important;top:42cqh!important;bottom:auto!important;gap:2.2cqh!important;left:4cqw!important;right:4cqw!important}" +
+  ".lys-spec-col{align-items:center!important;text-align:center!important;width:100%!important;gap:2cqh!important}" +
+  ".lys-spec-mid{display:none!important}" +
+  ".lys-spec-line{display:none!important}" +
+  ".lys-spec-foot{display:none!important}}" +
   "@container lys (max-width: 720px){.lys-hide-sm{display:none!important}}" +
   "@container lys (max-width: 1020px){.lys-hide-md{display:none!important}}" +
   "@media (prefers-reduced-motion: reduce){.lys-char{animation:none}.lys-g{transition:none}}"
@@ -1178,15 +1182,15 @@ export default function LycorisSpecimen({
             style={{ left: "6cqw", right: "6cqw", top: "15cqh", bottom: "22cqh", gridTemplateColumns: "1fr min(28cqw, 32cqh) 1fr", columnGap: "3cqw" }}
           >
             {/* Left Column: Date & Muhurtham */}
-            <div className="relative flex flex-col gap-[3cqh]">
+            <div className="lys-spec-col relative flex flex-col gap-[3cqh]">
               <div {...sc(2, "clip", 0)} style={hidden} className="relative">
                 <div style={{ ...sans, fontSize: 8, letterSpacing: "0.25em", color: taupe, textTransform: "uppercase", marginBottom: 6 }}>
                   Date & Auspicious Time
                 </div>
-                <div style={{ fontSize: "clamp(18px, 2.4cqw, 32px)", lineHeight: 1.15 }}>
+                <div style={{ fontSize: "clamp(16px, 2.4cqw, 32px)", lineHeight: 1.15 }}>
                   <span className="lys-edit" contentEditable suppressContentEditableWarning>{weddingDate}</span>
                 </div>
-                <div style={{ fontSize: "clamp(14px, 1.6cqw, 20px)", color: crimson, marginTop: 4 }}>
+                <div style={{ fontSize: "clamp(13px, 1.6cqw, 20px)", color: crimson, marginTop: 4 }}>
                   <span className="lys-edit" contentEditable suppressContentEditableWarning>{muhurtham}</span>
                 </div>
               </div>
@@ -1195,7 +1199,7 @@ export default function LycorisSpecimen({
                 <div style={{ ...sans, fontSize: 8, letterSpacing: "0.25em", color: taupe, textTransform: "uppercase", marginBottom: 6 }}>
                   Traditional Feast
                 </div>
-                <div style={{ fontSize: "clamp(15px, 1.8cqw, 22px)", lineHeight: 1.2 }}>
+                <div style={{ fontSize: "clamp(14px, 1.8cqw, 22px)", lineHeight: 1.2 }}>
                   <span className="lys-edit" contentEditable suppressContentEditableWarning>{sadhya}</span>
                 </div>
               </div>
@@ -1212,15 +1216,15 @@ export default function LycorisSpecimen({
             </div>
 
             {/* Right Column: Venue & Location */}
-            <div className="relative flex flex-col items-end gap-[3cqh] text-right">
+            <div className="lys-spec-col relative flex flex-col items-end gap-[3cqh] text-right">
               <div {...sc(2, "clip", 0.1)} style={hidden} className="relative">
                 <div style={{ ...sans, fontSize: 8, letterSpacing: "0.25em", color: taupe, textTransform: "uppercase", marginBottom: 6 }}>
                   Ceremony Venue
                 </div>
-                <div style={{ fontSize: "clamp(18px, 2.4cqw, 32px)", lineHeight: 1.15 }}>
+                <div style={{ fontSize: "clamp(16px, 2.4cqw, 32px)", lineHeight: 1.15 }}>
                   <span className="lys-edit" contentEditable suppressContentEditableWarning>{venue}</span>
                 </div>
-                <div style={{ fontSize: "clamp(14px, 1.6cqw, 20px)", color: taupe, marginTop: 4 }}>
+                <div style={{ fontSize: "clamp(13px, 1.6cqw, 20px)", color: taupe, marginTop: 4 }}>
                   <span className="lys-edit" contentEditable suppressContentEditableWarning>{location}</span>
                 </div>
               </div>
@@ -1229,15 +1233,15 @@ export default function LycorisSpecimen({
                 <div style={{ ...sans, fontSize: 8, letterSpacing: "0.25em", color: taupe, textTransform: "uppercase", marginBottom: 6 }}>
                   Evening Celebration
                 </div>
-                <div style={{ fontSize: "clamp(15px, 1.8cqw, 22px)", lineHeight: 1.2, color: crimson }}>
+                <div style={{ fontSize: "clamp(14px, 1.8cqw, 22px)", lineHeight: 1.2, color: crimson }}>
                   <span className="lys-edit" contentEditable suppressContentEditableWarning>{reception}</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <div {...sc(2, "line", 0.5)} className="absolute" style={{ ...hidden, left: "6cqw", right: "6cqw", bottom: "16cqh", height: 1, background: "#D5C6AC", transformOrigin: "left" }} />
-          <div {...sc(2, "rise", 0.6)} className="pointer-events-auto absolute text-center" style={{ ...sans, ...hidden, left: "6cqw", right: "6cqw", bottom: "10cqh", fontSize: "clamp(9px, 1.1cqw, 13px)", letterSpacing: "0.2em", textTransform: "uppercase", color: taupe }}>
+          <div {...sc(2, "line", 0.5)} className="lys-spec-line absolute" style={{ ...hidden, left: "6cqw", right: "6cqw", bottom: "16cqh", height: 1, background: "#D5C6AC", transformOrigin: "left" }} />
+          <div {...sc(2, "rise", 0.6)} className="lys-spec-foot pointer-events-auto absolute text-center" style={{ ...sans, ...hidden, left: "6cqw", right: "6cqw", bottom: "10cqh", fontSize: "clamp(9px, 1.1cqw, 13px)", letterSpacing: "0.2em", textTransform: "uppercase", color: taupe }}>
             Blessings & Traditional Kerala Sadhya Feast to Follow
           </div>
         </div>
