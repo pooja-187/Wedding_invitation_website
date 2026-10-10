@@ -600,7 +600,8 @@ const DEFAULT_TAGLINE = [
 // backticks or template holes — 21st injects this verbatim.
 const CSS =
   ".lys-stage{container-type:size;container-name:lys}" +
-  ".lys-char{display:inline-block;animation:lys-in 1.3s cubic-bezier(.2,.8,.2,1) both}" +
+  ".lys-char{display:inline-block;opacity:0;transform:translateY(0.35em) rotate(4deg);filter:blur(10px)}" +
+  ".lys-entered .lys-char{animation:lys-in 1.3s cubic-bezier(.2,.8,.2,1) both}" +
   "@keyframes lys-in{from{opacity:0;transform:translateY(0.35em) rotate(4deg);filter:blur(10px)}to{opacity:1;transform:none;filter:blur(0)}}" +
   ".lys-g{display:inline-block;transition:color .25s,transform .25s cubic-bezier(.2,.8,.2,1);cursor:default}" +
   ".lys-g:hover{color:var(--lys-red);transform:translateY(-0.08em) scale(1.35)}" +
@@ -855,7 +856,7 @@ export default function LycorisSpecimen({
     let running = false
     let visible = true
     let last = performance.now()
-    let born = last
+    let enteredAt = -1
     let time = 0
     let prog01 = -1
     let shownScene = -1
@@ -869,6 +870,13 @@ export default function LycorisSpecimen({
       if (moving) time += dt
 
       const r = root.getBoundingClientRect()
+      const stageRect = stage.getBoundingClientRect()
+      const isStageInView = stageRect.top < window.innerHeight * 0.9 && stageRect.bottom > 0
+      if (isStageInView && enteredAt < 0) {
+        enteredAt = now
+        stage.classList.add("lys-entered")
+      }
+
       const p = progressFrom(r.top, r.height, H)
       prog01 = prog01 < 0 || L.reduced ? p : prog01 + (p - prog01) * (1 - Math.exp(-dt * 9))
       const coord = sceneCoord(prog01, SCENES, HOLD)
@@ -902,13 +910,14 @@ export default function LycorisSpecimen({
       const vp = multiply(proj, lookAt(eye, HEART))
       const model = multiply(rotY(k.spin + spin + px * 0.35), rotX(py * 0.05))
 
-      // Initial bottom-to-top entrance rise into resting position
-      const introT = L.reduced ? 1 : clamp01((now - born) / 2000)
+      // Initial bottom-to-top entrance rise into resting position (triggers only when scrolling into this section)
+      const timeSinceEnter = enteredAt < 0 ? 0 : now - enteredAt
+      const introT = L.reduced || enteredAt < 0 ? (enteredAt < 0 ? 0 : 1) : clamp01(timeSinceEnter / 2000)
       const introEase = 1 - Math.pow(1 - introT, 4)
       const introWeight = Math.max(0, 1 - coord * 2.5)
-      const introOffsetY = (1 - introEase) * -1.4 * introWeight
+      const introOffsetY = (1 - introEase) * -1.5 * introWeight
       const curOy = k.oy + introOffsetY
-      const bloom = L.reduced ? 1 : clamp01((now - born) / 2200)
+      const bloom = L.reduced || enteredAt < 0 ? (enteredAt < 0 ? 0 : 1) : clamp01(timeSinceEnter / 2200)
 
       // the ambient glow behind the flower tracks where the heart lands
       const gx = (0.5 + k.ox / 2) * W
@@ -1038,18 +1047,10 @@ export default function LycorisSpecimen({
       running = false
       cancelAnimationFrame(raf)
     }
-    let hasEntered = false
     const io = new IntersectionObserver(([e]) => {
       visible = e.isIntersecting
-      if (visible) {
-        if (!hasEntered) {
-          hasEntered = true
-          born = performance.now()
-        }
-        start()
-      } else {
-        stop()
-      }
+      if (visible) start()
+      else stop()
     })
     io.observe(root)
     const onVis = () => (document.hidden ? stop() : start())
