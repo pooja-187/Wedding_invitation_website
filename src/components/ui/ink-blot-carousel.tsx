@@ -240,38 +240,48 @@ type LayerProps = {
   onDone: () => void
 }
 
-// The blot: white circles under a turbulence displacement make a ragged
-// mask; the next picture shows through it while the circles grow.
 function Layer({ to, x, y, w, h, duration, opts, onDone }: LayerProps) {
   const id = "ink" + React.useId().replace(/[^a-zA-Z0-9]/g, "")
   const circles = React.useRef([] as (SVGCircleElement | null)[])
   const done = React.useRef(onDone)
   done.current = onDone
-  const parts = React.useMemo(() => [[0, 0, 1] as [number, number, number]].concat(drops(Math.round(x * 7 + y * 13), 7)), [x, y])
+  const parts = React.useMemo(() => [[0, 0, 1] as [number, number, number]].concat(drops(Math.round(x * 7 + y * 13), 5)), [x, y])
   React.useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    const R = reach(x, y, w, h) * 1.3
+    const R = reach(x, y, w, h) * 1.25
     const D = reduce ? 300 : duration
     const t0 = performance.now()
     let raf = 0
+    let finished = false
+    const finish = () => {
+      if (!finished) {
+        finished = true
+        done.current()
+      }
+    }
     const step = (now: number) => {
       const t = Math.min(1, (now - t0) / D)
       const e = reduce ? 1 : easeInOut(t)
-      parts.forEach((p, i) => circles.current[i]?.setAttribute("r", String(R * e * (i ? p[2] * 1.6 : 1))))
-      if (t < 1) raf = requestAnimationFrame(step)
-      else done.current()
+      parts.forEach((p, i) => circles.current[i]?.setAttribute("r", String(R * e * (i ? p[2] * 1.5 : 1))))
+      if (t < 1) {
+        raf = requestAnimationFrame(step)
+      } else {
+        finish()
+      }
     }
     raf = requestAnimationFrame(step)
-    return () => cancelAnimationFrame(raf)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    const safety = setTimeout(finish, D + 80)
+    return () => {
+      cancelAnimationFrame(raf)
+      clearTimeout(safety)
+    }
+  }, [x, y, w, h, duration, parts])
   return (
     <svg className="ib-in" viewBox={"0 0 " + w + " " + h} preserveAspectRatio="none" aria-hidden="true">
       <defs>
-        <filter id={id + "f"} x="-25%" y="-25%" width="150%" height="150%">
-          <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves={3} seed={3} />
-          <feDisplacementMap in="SourceGraphic" scale={opts.bleed ?? 90} xChannelSelector="R" yChannelSelector="G" />
-          <feGaussianBlur stdDeviation={1.5} />
+        <filter id={id + "f"} x="-20%" y="-20%" width="140%" height="140%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.015" numOctaves={1} seed={3} result="noise" />
+          <feDisplacementMap in="SourceGraphic" in2="noise" scale={opts.bleed ?? 45} xChannelSelector="R" yChannelSelector="G" />
         </filter>
         <mask id={id + "m"} maskUnits="userSpaceOnUse" x={0} y={0} width={w} height={h}>
           <rect width={w} height={h} fill="black" />
@@ -318,9 +328,9 @@ const IB_CSS = [
 export default function InkBlotCarousel({
   slides = DEFAULT_SLIDES,
   height = "100svh",
-  duration = 1400,
-  bleed = 90,
-  autoplay = 2000,
+  duration = 1000,
+  bleed = 45,
+  autoplay = 4500,
   ink = "#ffffff",
   onChange,
   className,
@@ -332,34 +342,53 @@ export default function InkBlotCarousel({
   const srcs = useSlideImages(slides)
   const [index, setIndex] = React.useState(0)
   const [incoming, setIncoming] = React.useState(null as null | { to: number; dir: number; x: number; y: number; w: number; h: number; id: number })
+  const incomingRef = React.useRef(incoming)
+  incomingRef.current = incoming
   const [paused, setPaused] = React.useState(false)
   const rootRef = React.useRef(null as HTMLDivElement | null)
   const down = React.useRef(null as null | { x: number; y: number })
   const seq = React.useRef(0)
 
-  const go = (dir: number, px?: number, py?: number) => {
+  const go = React.useCallback((dir: number, px?: number, py?: number) => {
     const root = rootRef.current
-    if (!root || incoming || n < 2) return
+    if (!root || incomingRef.current || n < 2) return
     const w = root.clientWidth
     const h = root.clientHeight
     seq.current += 1
     const [dx, dy] = defaultOrigin(dir, w, h, (seq.current * 0.618) % 1)
     setIncoming({ to: wrap(index + dir, n), dir, x: px ?? dx, y: py ?? dy, w, h, id: Date.now() })
-  }
-  const commit = () => {
-    if (!incoming) return
-    setIndex(incoming.to)
-    setIncoming(null)
-  }
+  }, [index, n])
+
+  const commit = React.useCallback(() => {
+    setIncoming((prev) => {
+      if (!prev) return null
+      setIndex(prev.to)
+      return null
+    })
+  }, [])
 
   React.useEffect(() => {
     onChange?.(index)
   }, [index, onChange])
 
+  // state-safe autoplay timer
+  React.useEffect(() => {
+    if (paused || autoplay <= 0 || n < 2) return
+    const timer = setInterval(() => {
+      if (!incomingRef.current) {
+        go(1)
+      }
+    }, autoplay)
+    return () => clearInterval(timer)
+  }, [paused, autoplay, n, go])
+
   // warm the cache so a tap starts its transition at once
   React.useEffect(() => {
     srcs.forEach((src) => {
-      if (src) new Image().src = src
+      if (src) {
+        const img = new Image()
+        img.src = src
+      }
     })
   }, [srcs.join("|")]) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -465,7 +494,7 @@ export default function InkBlotCarousel({
         </button>
       </div>
       <div className="ib-track" aria-hidden="true">
-        <div key={"f" + index} className="ib-fill" data-run={autoplay > 0 && n > 1 && !incoming ? "1" : "0"} onAnimationEnd={() => go(1)} />
+        <div key={"f" + index} className="ib-fill" data-run={autoplay > 0 && n > 1 && !incoming ? "1" : "0"} />
       </div>
       <div className="ib-sr" aria-live="polite">
         {"Slide " + (shown + 1) + " of " + n + (s.title ? ": " + s.title : "")}

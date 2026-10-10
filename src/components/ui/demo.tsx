@@ -5,8 +5,8 @@ import InkBlotCarousel from "@/components/ui/ink-blot-carousel"
 export default function DemoPhotos() {
   return (
     <InkBlotCarousel
-      autoplay={2000}
-      duration={1400}
+      autoplay={4500}
+      duration={1000}
       slides={[
         {
           image: "/images/couple/couple-4.jpg",
