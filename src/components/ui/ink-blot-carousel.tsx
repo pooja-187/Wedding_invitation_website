@@ -239,29 +239,85 @@ type LayerProps = {
   onDone: () => void
 }
 
-function Layer({ to, x, y, duration, onDone }: LayerProps) {
+function Layer({ to, x, y, w, h, duration, onDone }: LayerProps) {
+  const id = "ink" + React.useId().replace(/[^a-zA-Z0-9]/g, "")
+  const circles = React.useRef([] as (SVGCircleElement | null)[])
   const done = React.useRef(onDone)
   done.current = onDone
 
+  const R = reach(x, y, w, h) * 1.35
+  const parts = React.useMemo(() => {
+    const seed = Math.round(x * 11 + y * 17)
+    return [[0, 0, 1] as [number, number, number]].concat(drops(seed, 14))
+  }, [x, y])
+
   React.useEffect(() => {
-    const timer = setTimeout(() => {
-      done.current()
-    }, duration + 50)
-    return () => clearTimeout(timer)
-  }, [duration])
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    const D = reduce ? 300 : duration
+    const t0 = performance.now()
+    let raf = 0
+    let finished = false
+
+    const finish = () => {
+      if (!finished) {
+        finished = true
+        done.current()
+      }
+    }
+
+    const step = (now: number) => {
+      const t = Math.min(1, (now - t0) / D)
+      const e = reduce ? 1 : easeInOut(t)
+      for (let i = 0; i < parts.length; i++) {
+        const el = circles.current[i]
+        if (!el) continue
+        const p = parts[i]
+        const rVal = i === 0 ? R * e : R * Math.max(0, (e - 0.06) / 0.94) * p[2] * 1.45
+        el.setAttribute("r", rVal.toFixed(1))
+      }
+      if (t < 1) {
+        raf = requestAnimationFrame(step)
+      } else {
+        finish()
+      }
+    }
+
+    raf = requestAnimationFrame(step)
+    const safety = setTimeout(finish, D + 60)
+    return () => {
+      cancelAnimationFrame(raf)
+      clearTimeout(safety)
+    }
+  }, [R, duration, parts])
 
   return (
-    <div
-      className="ib-layer"
-      style={{
-        ["--ox" as string]: `${x}px`,
-        ["--oy" as string]: `${y}px`,
-        ["--ib-dur" as string]: `${duration}ms`,
-      }}
-      onAnimationEnd={onDone}
-    >
-      <img className="ib-img" src={to} alt="" draggable={false} />
-    </div>
+    <svg className="ib-in" viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <mask id={id} maskUnits="userSpaceOnUse" x={0} y={0} width={w} height={h}>
+          <rect width={w} height={h} fill="black" />
+          <g fill="white">
+            {parts.map((p, i) => (
+              <circle
+                key={i}
+                ref={(el) => void (circles.current[i] = el)}
+                cx={x + p[0]}
+                cy={y + p[1]}
+                r={0}
+              />
+            ))}
+          </g>
+        </mask>
+      </defs>
+      <image
+        href={to}
+        x={0}
+        y={0}
+        width={w}
+        height={h}
+        preserveAspectRatio="xMidYMid slice"
+        mask={`url(#${id})`}
+      />
+    </svg>
   )
 }
 
@@ -270,7 +326,7 @@ const IB_CSS = [
   ".ib-root:focus-visible{box-shadow:inset 0 0 0 2px var(--ib-ink)}",
   ".ib-base{position:absolute;inset:0}",
   ".ib-img{position:absolute;inset:0;width:100%;height:100%;max-width:none;object-fit:cover;display:block;pointer-events:none}",
-  ".ib-layer{position:absolute;inset:0;will-change:clip-path,opacity,transform;animation:ib-bloom var(--ib-dur) cubic-bezier(0.2, 0.85, 0.25, 1) forwards;pointer-events:none}",
+  ".ib-in{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;overflow:hidden;will-change:transform}",
   ".ib-shade{position:absolute;inset:auto 0 0 0;height:46%;background:linear-gradient(to top,rgba(0,0,0,.65),rgba(0,0,0,0));pointer-events:none}",
   ".ib-text{position:absolute;left:clamp(20px,4vw,56px);bottom:clamp(44px,8vh,80px);right:clamp(140px,20vw,280px);pointer-events:none}",
   ".ib-line{display:block;overflow:hidden;padding-bottom:.08em}",
@@ -288,10 +344,9 @@ const IB_CSS = [
   ".ib-fill[data-run='1']{animation:ib-auto var(--ib-auto) linear forwards}",
   ".ib-root[data-paused='1'] .ib-fill{animation-play-state:paused}",
   ".ib-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}",
-  "@keyframes ib-bloom{0%{clip-path:circle(0% at var(--ox) var(--oy));opacity:0.25;transform:scale(1.05)}100%{clip-path:circle(150% at var(--ox) var(--oy));opacity:1;transform:scale(1)}}",
   "@keyframes ib-rise{from{transform:translateY(105%)}to{transform:none}}",
   "@keyframes ib-auto{to{transform:scaleX(1)}}",
-  "@media (prefers-reduced-motion:reduce){.ib-line>span{animation:none}.ib-layer{animation:none}}",
+  "@media (prefers-reduced-motion:reduce){.ib-line>span{animation:none}}",
 ].join("\n")
 
 export default function InkBlotCarousel({
