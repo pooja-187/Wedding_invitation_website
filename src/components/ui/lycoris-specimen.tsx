@@ -1350,7 +1350,25 @@ export default function LycorisSpecimen({
             </button>
           ))}
         </nav>
+
+        {/* Soft progressive feather blend at the base into the warm ivory page */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute left-0 right-0 bottom-0 h-36 md:h-56 z-20"
+          style={{
+            background: "linear-gradient(to bottom, rgba(248, 243, 233, 0) 0%, rgba(248, 243, 233, 0.4) 35%, rgba(248, 243, 233, 0.85) 75%, #F8F3E9 100%)",
+          }}
+        />
       </div>
+
+      {/* Seamless transition blend extending into following section */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-0 right-0 -bottom-8 h-36 z-10"
+        style={{
+          background: "linear-gradient(to bottom, transparent 0%, #F8F3E9 100%)",
+        }}
+      />
     </section>
   )
 }
