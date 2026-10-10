@@ -855,7 +855,7 @@ export default function LycorisSpecimen({
     let running = false
     let visible = true
     let last = performance.now()
-    const born = last
+    let born = last
     let time = 0
     let prog01 = -1
     let shownScene = -1
@@ -901,11 +901,18 @@ export default function LycorisSpecimen({
       const proj = perspective(fov, W / H, Math.max(0.05, dist - 6), dist + 8)
       const vp = multiply(proj, lookAt(eye, HEART))
       const model = multiply(rotY(k.spin + spin + px * 0.35), rotX(py * 0.05))
-      const bloom = L.reduced ? 1 : clamp01((now - born) / 2600)
+
+      // Initial bottom-to-top entrance rise into resting position
+      const introT = L.reduced ? 1 : clamp01((now - born) / 2000)
+      const introEase = 1 - Math.pow(1 - introT, 4)
+      const introWeight = Math.max(0, 1 - coord * 2.5)
+      const introOffsetY = (1 - introEase) * -1.4 * introWeight
+      const curOy = k.oy + introOffsetY
+      const bloom = L.reduced ? 1 : clamp01((now - born) / 2200)
 
       // the ambient glow behind the flower tracks where the heart lands
       const gx = (0.5 + k.ox / 2) * W
-      const gy = (0.5 - k.oy / 2) * H
+      const gy = (0.5 - curOy / 2) * H
       const gr = k.size * (tall ? W * 0.8 : minDim) * 1.65
       glow.style.transform =
         "translate(" + (gx - gr).toFixed(1) + "px," + (gy - gr).toFixed(1) + "px)"
@@ -918,7 +925,7 @@ export default function LycorisSpecimen({
         const red = hexToLinear(L.crimson)
         g.uniformMatrix4fv(loc.u_vp, false, vp)
         g.uniformMatrix4fv(loc.u_model, false, model)
-        g.uniform2f(loc.u_offset, k.ox, k.oy)
+        g.uniform2f(loc.u_offset, k.ox, curOy)
         g.uniform1f(loc.u_time, time)
         g.uniform1f(loc.u_bloom, bloom)
         g.uniform1f(loc.u_sway, moving ? 1 : 0)
@@ -946,7 +953,7 @@ export default function LycorisSpecimen({
             const cy = mvp[1] * q[0] + mvp[5] * y + mvp[9] * q[2] + mvp[13]
             const cw = mvp[3] * q[0] + mvp[7] * y + mvp[11] * q[2] + mvp[15]
             const sx = ((cx / cw + k.ox) * 0.5 + 0.5) * W
-            const sy = (0.5 - (cy / cw + k.oy) * 0.5) * H
+            const sy = (0.5 - (cy / cw + curOy) * 0.5) * H
             if (i === 0) c.moveTo(sx, sy)
             else c.lineTo(sx, sy)
           })
@@ -1031,10 +1038,18 @@ export default function LycorisSpecimen({
       running = false
       cancelAnimationFrame(raf)
     }
+    let hasEntered = false
     const io = new IntersectionObserver(([e]) => {
       visible = e.isIntersecting
-      if (visible) start()
-      else stop()
+      if (visible) {
+        if (!hasEntered) {
+          hasEntered = true
+          born = performance.now()
+        }
+        start()
+      } else {
+        stop()
+      }
     })
     io.observe(root)
     const onVis = () => (document.hidden ? stop() : start())
