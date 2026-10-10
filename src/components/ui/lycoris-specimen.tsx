@@ -353,6 +353,9 @@ const sceneCoord = (p: number, n: number, hold: number) => {
  */
 const reveal = (coord: number, scene: number, delay: number) => {
   const d = coord - scene
+  if (scene === 5 && d > 0) {
+    return 1
+  }
   const lag = d < 0 ? delay : 1 - delay
   return clamp01((0.6 - Math.abs(d) - lag * 0.2) / 0.25)
 }
