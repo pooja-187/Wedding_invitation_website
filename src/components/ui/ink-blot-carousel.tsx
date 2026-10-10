@@ -245,53 +245,87 @@ function Layer({ to, x, y, w, h, duration, opts, onDone }: LayerProps) {
   const circles = React.useRef([] as (SVGCircleElement | null)[])
   const done = React.useRef(onDone)
   done.current = onDone
-  const parts = React.useMemo(() => [[0, 0, 1] as [number, number, number]].concat(drops(Math.round(x * 7 + y * 13), 7)), [x, y])
+  const isMobile = typeof window !== "undefined" && (w < 768 || /iPhone|iPad|iPod|Android/i.test(navigator.userAgent))
+  const parts = React.useMemo(() => {
+    const seed = Math.round(x * 11 + y * 17)
+    return [[0, 0, 1] as [number, number, number]].concat(drops(seed, isMobile ? 12 : 8))
+  }, [x, y, isMobile])
+
   React.useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    const R = reach(x, y, w, h) * 1.3
+    const R = reach(x, y, w, h) * 1.35
     const D = reduce ? 300 : duration
     const t0 = performance.now()
     let raf = 0
     let finished = false
+
     const finish = () => {
       if (!finished) {
         finished = true
         done.current()
       }
     }
+
     const step = (now: number) => {
       const t = Math.min(1, (now - t0) / D)
       const e = reduce ? 1 : easeInOut(t)
-      parts.forEach((p, i) => circles.current[i]?.setAttribute("r", String(R * e * (i ? p[2] * 1.6 : 1))))
-      if (t < 1) raf = requestAnimationFrame(step)
-      else finish()
+      for (let i = 0; i < parts.length; i++) {
+        const el = circles.current[i]
+        if (!el) continue
+        const p = parts[i]
+        const rVal = i === 0 ? R * e : R * Math.max(0, (e - 0.06) / 0.94) * p[2] * 1.5
+        el.setAttribute("r", rVal.toFixed(1))
+      }
+      if (t < 1) {
+        raf = requestAnimationFrame(step)
+      } else {
+        finish()
+      }
     }
+
     raf = requestAnimationFrame(step)
-    const safety = setTimeout(finish, D + 80)
+    const safety = setTimeout(finish, D + 60)
     return () => {
       cancelAnimationFrame(raf)
       clearTimeout(safety)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [x, y, w, h, duration, parts])
+
   return (
-    <svg className="ib-in" viewBox={"0 0 " + w + " " + h} preserveAspectRatio="none" aria-hidden="true">
+    <svg className="ib-in" viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" aria-hidden="true">
       <defs>
-        <filter id={id + "f"} x="-20%" y="-20%" width="140%" height="140%">
-          <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves={w < 768 ? 2 : 3} seed={3} />
-          <feDisplacementMap in="SourceGraphic" scale={w < 768 ? 55 : (opts.bleed ?? 90)} xChannelSelector="R" yChannelSelector="G" />
-          <feGaussianBlur stdDeviation={1} />
-        </filter>
+        {!isMobile && (
+          <filter id={id + "f"} x="-20%" y="-20%" width="140%" height="140%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves={3} seed={3} />
+            <feDisplacementMap in="SourceGraphic" scale={opts.bleed ?? 90} xChannelSelector="R" yChannelSelector="G" />
+            <feGaussianBlur stdDeviation={1} />
+          </filter>
+        )}
         <mask id={id + "m"} maskUnits="userSpaceOnUse" x={0} y={0} width={w} height={h}>
           <rect width={w} height={h} fill="black" />
-          <g filter={"url(#" + id + "f)"}>
+          <g filter={!isMobile ? `url(#${id}f)` : undefined} fill="white">
             {parts.map((p, i) => (
-              <circle key={i} ref={(el) => void (circles.current[i] = el)} cx={x + p[0]} cy={y + p[1]} r={0} fill="white" />
+              <circle
+                key={i}
+                ref={(el) => void (circles.current[i] = el)}
+                cx={x + p[0]}
+                cy={y + p[1]}
+                r={0}
+                fill="white"
+              />
             ))}
           </g>
         </mask>
       </defs>
-      <image href={to} x={0} y={0} width={w} height={h} preserveAspectRatio="xMidYMid slice" mask={"url(#" + id + "m)"} />
+      <image
+        href={to}
+        x={0}
+        y={0}
+        width={w}
+        height={h}
+        preserveAspectRatio="xMidYMid slice"
+        mask={`url(#${id}m)`}
+      />
     </svg>
   )
 }
