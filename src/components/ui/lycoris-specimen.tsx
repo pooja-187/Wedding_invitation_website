@@ -1335,12 +1335,6 @@ export default function LycorisSpecimen({
               </div>
             </div>
           </div>
-
-          <div {...sc(5, "rise", 0.75)} className="pointer-events-auto absolute flex items-center justify-between gap-4 z-30" style={{ ...sans, ...hidden, left: "5cqw", right: "5cqw", bottom: "4.5cqh", fontSize: "clamp(10px, 1.3cqw, 16px)", letterSpacing: "0.12em", textTransform: "uppercase", color: bone }}>
-            <span>{name}</span>
-            <Mark color={crimson} accent={bone} />
-            <span>{rsvp}</span>
-          </div>
         </div>
 
         {/* ================================== nav ================================== */}
