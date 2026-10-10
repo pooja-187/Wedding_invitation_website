@@ -650,9 +650,9 @@ export default function LycorisSpecimen({
   titleFontSize,
   fontHref = FONT_HREF,
   ink = "#F8F3E9",
-  bone = "#392B2A",
+  bone = "#2C201F",
   cosmicLatte = "#B7A89A",
-  taupe = "#7A6B5F",
+  taupe = "#54463C",
   crimson: crimsonProp,
   wine,
   burgundy,
@@ -1151,27 +1151,27 @@ export default function LycorisSpecimen({
             </h1>
           </div>
 
-          <div className="absolute flex items-end justify-between gap-6" style={{ left: "5cqw", right: "5cqw", bottom: "5cqh" }}>
+          <div className="absolute flex items-end justify-between gap-6 z-30 pointer-events-auto" style={{ left: "5cqw", right: "5cqw", bottom: "5cqh" }}>
             <div {...sc(0, "rise", 0.3)} className="flex items-center gap-3" style={hidden}>
               <Mark color={bone} accent={crimson} />
-              <span style={{ ...sans, fontSize: "clamp(18px, 2.2cqw, 30px)", letterSpacing: "-0.02em", fontWeight: 300 }}>{year}</span>
-              <span style={{ ...sans, color: taupe, fontSize: 9, lineHeight: 1.25, letterSpacing: "0.14em", textTransform: "uppercase", borderBottom: "1px solid #D5C6AC", paddingBottom: 6, paddingRight: "4cqw" }}>
+              <span style={{ ...sans, color: bone, fontSize: "clamp(18px, 2.2cqw, 30px)", letterSpacing: "-0.02em", fontWeight: 400 }}>{year}</span>
+              <span style={{ ...sans, color: taupe, fontSize: "clamp(9px, 0.95cqw, 11px)", lineHeight: 1.35, letterSpacing: "0.14em", textTransform: "uppercase", borderBottom: "1px solid rgba(84, 70, 60, 0.35)", paddingBottom: 6, paddingRight: "4cqw", fontWeight: 600 }}>
                 Wedding Invitation
                 <br />
                 Kerala, India
               </span>
             </div>
-            <div {...sc(0, "rise", 0.5)} className="lys-hide-sm flex flex-col items-end text-right" style={{ ...sans, ...hidden, color: crimson, fontSize: 9, lineHeight: 1.3, letterSpacing: "0.12em", textTransform: "uppercase" }}>
+            <div {...sc(0, "rise", 0.5)} className="lys-hide-sm flex flex-col items-end text-right" style={{ ...sans, ...hidden, color: crimson, fontSize: "clamp(9px, 0.95cqw, 11px)", lineHeight: 1.35, letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 600 }}>
               <span>{weddingDate}</span>
-              <span style={{ color: taupe }}>{location}</span>
+              <span style={{ color: taupe, fontWeight: 500 }}>{location}</span>
             </div>
           </div>
         </div>
 
         {/* ================================ 1 · blessing ================================ */}
-        <div className="pointer-events-none absolute inset-0">
-          <div {...sc(1, "rise", 0.6)} className="absolute text-center w-full" style={{ ...sans, ...hidden, left: 0, bottom: "7cqh", fontSize: "clamp(10px, 1.1cqw, 14px)", letterSpacing: "0.22em", textTransform: "uppercase", padding: "0 4cqw" }}>
-            <span style={{ color: crimson }}>Together with their families</span> — invite you to celebrate their wedding
+        <div className="pointer-events-none absolute inset-0 z-30">
+          <div {...sc(1, "rise", 0.6)} className="absolute text-center w-full" style={{ ...sans, ...hidden, left: 0, bottom: "7cqh", fontSize: "clamp(11px, 1.15cqw, 15px)", letterSpacing: "0.22em", textTransform: "uppercase", padding: "0 4cqw", color: bone, fontWeight: 500 }}>
+            <span style={{ color: crimson, fontWeight: 600 }}>Together with their families</span> — invite you to celebrate their wedding
           </div>
         </div>
 
@@ -1359,9 +1359,9 @@ export default function LycorisSpecimen({
         {/* Soft progressive feather blend at the base into the warm ivory page */}
         <div
           aria-hidden
-          className="pointer-events-none absolute left-0 right-0 bottom-0 h-36 md:h-56 z-20"
+          className="pointer-events-none absolute left-0 right-0 bottom-0 h-24 md:h-36 z-10"
           style={{
-            background: "linear-gradient(to bottom, rgba(248, 243, 233, 0) 0%, rgba(248, 243, 233, 0.4) 35%, rgba(248, 243, 233, 0.85) 75%, #F8F3E9 100%)",
+            background: "linear-gradient(to bottom, rgba(248, 243, 233, 0) 0%, rgba(248, 243, 233, 0.25) 45%, rgba(248, 243, 233, 0.8) 100%)",
           }}
         />
       </div>
