@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { WineGlassButtons } from "./wine-glass-buttons"
 
 /**
  * Lycoris Specimen — a scroll-scrubbed type specimen built around one object:
@@ -1565,21 +1566,70 @@ export default function LycorisSpecimen({
           </div>
         </div>
 
-        {/* ================================ 3 · heritage =============================== */}
-        <div className="pointer-events-none absolute inset-0" style={display}>
-          <div className="absolute text-center" style={{ left: "50%", top: "14cqh", transform: "translateX(-50%)", fontSize: "min(15cqw, 12cqh)", lineHeight: 0.9, textTransform: "uppercase", whiteSpace: "nowrap" }}>
-            <span {...sc(3, "fade", 0.3)} style={{ ...hidden, position: "absolute", right: "100%", top: "0.35em", fontSize: "0.12em", marginRight: "1.2em", textTransform: "none" }}>{name}</span>
-            <span {...sc(3, "fade", 0.4)} style={{ ...hidden, position: "absolute", left: "100%", top: "0.35em", fontSize: "0.12em", marginLeft: "1.2em", textTransform: "none" }}>Wedding</span>
-            <div {...sc(3, "clip", 0)} style={hidden}>Kerala</div>
-            <div {...sc(3, "clip", 0.15)} style={hidden}>Wedding</div>
-            <div {...sc(3, "clip", 0.3)} style={hidden}>Union</div>
+        {/* ================================ 3 · heritage / actions =============================== */}
+        <div className="pointer-events-none absolute inset-0 z-30" style={display}>
+          {/* Top Corner Labels: Alisha & Alex (left) and Wedding (right) */}
+          <div
+            className="absolute flex justify-between items-center"
+            style={{ left: "6cqw", right: "6cqw", top: "5.5cqh" }}
+          >
+            <span
+              {...sc(3, "fade", 0.2)}
+              style={{
+                ...hidden,
+                fontStyle: "italic",
+                fontSize: "clamp(12px, 1.4cqw, 16px)",
+                color: bone,
+                letterSpacing: "0.02em",
+              }}
+            >
+              {name}
+            </span>
+            <span
+              {...sc(3, "fade", 0.25)}
+              style={{
+                ...hidden,
+                fontStyle: "italic",
+                fontSize: "clamp(12px, 1.4cqw, 16px)",
+                color: bone,
+                letterSpacing: "0.02em",
+              }}
+            >
+              Wedding
+            </span>
           </div>
+
+          {/* Premium Wine-Red Glass Action Buttons */}
+          <div
+            {...sc(3, "rise", 0.35)}
+            className="pointer-events-auto absolute left-0 right-0 flex justify-center"
+            style={{
+              ...hidden,
+              top: "13.5cqh",
+            }}
+          >
+            <WineGlassButtons />
+          </div>
+
+          {/* Bottom Location Tagline */}
           <div className="absolute flex justify-center" style={{ left: 0, right: 0, bottom: "6cqh" }}>
-            <div {...sc(3, "rise", 0.6)} style={{ ...sans, ...hidden, fontSize: 9, letterSpacing: "0.45em", textTransform: "uppercase", whiteSpace: "nowrap" }}>
+            <div
+              {...sc(3, "rise", 0.6)}
+              style={{
+                ...sans,
+                ...hidden,
+                fontSize: 9,
+                letterSpacing: "0.45em",
+                textTransform: "uppercase",
+                whiteSpace: "nowrap",
+                color: taupe,
+              }}
+            >
               Kumarakom · God's Own Country · Kerala
             </div>
           </div>
         </div>
+
 
         {/* ================================ 4 · message =============================== */}
         <div className="pointer-events-none absolute inset-0" style={display}>
