@@ -56,6 +56,14 @@ export type LycorisSpecimenProps = {
   ceremonyMonth?: string
   ceremonyYear?: string
   countdownTarget?: string
+  groomName?: string
+  groomParents?: string
+  groomHouse?: string
+  groomPlace?: string
+  brideName?: string
+  brideParents?: string
+  brideHouse?: string
+  bridePlace?: string
 }
 
 // #region flower
@@ -674,6 +682,14 @@ export default function LycorisSpecimen({
   ceremonyMonth = "DEC",
   ceremonyYear = "2026",
   countdownTarget = "2026-12-28T10:30:00",
+  groomName = "Alex",
+  groomParents = "S/o T P John & Anitha Mathew",
+  groomHouse = "Thuruthiyil House",
+  groomPlace = "Asramam, Kollam",
+  brideName = "Alisha",
+  brideParents = "D/o Jai K Paul & Mini Jai",
+  brideHouse = "Kumbalamthadathil House",
+  bridePlace = "Piravom, Ernakulam",
 }: LycorisSpecimenProps) {
   const crimson = burgundy ?? wine ?? crimsonProp ?? "#800D28"
   const rootRef = React.useRef<HTMLElement | null>(null)
@@ -1385,74 +1401,168 @@ export default function LycorisSpecimen({
           </div>
         </div>
 
-        {/* ============================== 2 · ceremony ============================== */}
-        <div className="pointer-events-none absolute inset-0" style={display}>
+        {/* ============================== 2 · groom & bride ============================== */}
+        <div className="pointer-events-none absolute inset-0 z-30" style={display}>
           <div
-            className="lys-spec pointer-events-auto absolute grid items-center"
-            style={{ left: "6cqw", right: "6cqw", top: "15cqh", bottom: "22cqh", gridTemplateColumns: "1fr min(28cqw, 32cqh) 1fr", columnGap: "3cqw" }}
+            className="lys-spec pointer-events-auto absolute flex flex-col items-center justify-center text-center"
+            style={{
+              left: "4cqw",
+              right: "4cqw",
+              top: "37cqh",
+              bottom: "auto",
+              gap: "clamp(8px, 1.6cqh, 20px)",
+            }}
           >
-            {/* Left Column: Date & Muhurtham */}
-            <div className="lys-spec-col relative flex flex-col gap-[3cqh]">
-              <div {...sc(2, "clip", 0)} style={hidden} className="relative">
-                <div style={{ ...sans, fontSize: 8, letterSpacing: "0.25em", color: taupe, textTransform: "uppercase", marginBottom: 6 }}>
-                  Date & Auspicious Time
-                </div>
-                <div style={{ fontSize: "clamp(16px, 2.4cqw, 32px)", lineHeight: 1.15 }}>
-                  <span className="lys-edit" contentEditable suppressContentEditableWarning>{weddingDate}</span>
-                </div>
-                <div style={{ fontSize: "clamp(13px, 1.6cqw, 20px)", color: crimson, marginTop: 4 }}>
-                  <span className="lys-edit" contentEditable suppressContentEditableWarning>{muhurtham}</span>
-                </div>
+            {/* GROOM Section */}
+            <div {...sc(2, "clip", 0.05)} className="flex flex-col items-center text-center max-w-[400px]" style={hidden}>
+              <div
+                style={{
+                  ...sans,
+                  fontSize: "clamp(9px, 0.95cqw, 11px)",
+                  letterSpacing: "0.35em",
+                  textTransform: "uppercase",
+                  color: crimson,
+                  fontWeight: 600,
+                  marginBottom: 3,
+                }}
+              >
+                G R O O M
               </div>
-
-              <div {...sc(2, "clip", 0.2)} style={hidden} className="relative">
-                <div style={{ ...sans, fontSize: 8, letterSpacing: "0.25em", color: taupe, textTransform: "uppercase", marginBottom: 6 }}>
-                  Traditional Feast
-                </div>
-                <div style={{ fontSize: "clamp(14px, 1.8cqw, 22px)", lineHeight: 1.2 }}>
-                  <span className="lys-edit" contentEditable suppressContentEditableWarning>{sadhya}</span>
-                </div>
+              <div
+                style={{
+                  fontFamily: DISPLAY,
+                  fontStyle: "italic",
+                  fontSize: "clamp(26px, 4.4cqw, 42px)",
+                  lineHeight: 1.15,
+                  color: bone,
+                  fontWeight: 500,
+                  marginBottom: 4,
+                }}
+              >
+                <span className="lys-edit" contentEditable suppressContentEditableWarning>
+                  {groomName}
+                </span>
+              </div>
+              <div
+                style={{
+                  fontFamily: DISPLAY,
+                  fontStyle: "italic",
+                  fontSize: "clamp(13px, 1.55cqw, 18px)",
+                  lineHeight: 1.35,
+                  color: bone,
+                  marginBottom: 2,
+                }}
+              >
+                <span className="lys-edit" contentEditable suppressContentEditableWarning>
+                  {groomParents}
+                </span>
+              </div>
+              <div
+                style={{
+                  fontFamily: DISPLAY,
+                  fontSize: "clamp(13px, 1.45cqw, 17px)",
+                  lineHeight: 1.35,
+                  color: bone,
+                  marginBottom: 2,
+                }}
+              >
+                <span className="lys-edit" contentEditable suppressContentEditableWarning>
+                  {groomHouse}
+                </span>
+              </div>
+              <div
+                style={{
+                  ...sans,
+                  fontSize: "clamp(10.5px, 1.15cqw, 13px)",
+                  color: taupe,
+                  letterSpacing: "0.1em",
+                  fontWeight: 500,
+                }}
+              >
+                <span className="lys-edit" contentEditable suppressContentEditableWarning>
+                  {groomPlace}
+                </span>
               </div>
             </div>
 
-            {/* Center Column: Names Anchor */}
-            <div className="lys-spec-mid relative h-full text-center flex flex-col justify-center">
-              <div {...sc(2, "rise", 0.35)} className="w-full" style={{ ...hidden, fontSize: "clamp(18px, 2.4cqw, 32px)", lineHeight: 1.1 }}>
-                {name}
-                <div style={{ ...sans, fontSize: "9px", letterSpacing: "0.22em", textTransform: "uppercase", color: taupe, marginTop: "0.6em" }}>
-                  Wedding Ceremony
-                </div>
-              </div>
+            {/* Elegant Golden Line & Center Ornament Divider */}
+            <div {...sc(2, "line", 0.2)} className="flex items-center justify-center gap-3 w-40 sm:w-48 my-0.5" style={hidden}>
+              <div className="h-px bg-[#D5C6AC]/80 flex-1" />
+              <span className="text-[#800D28] text-xs font-serif select-none">❖</span>
+              <div className="h-px bg-[#D5C6AC]/80 flex-1" />
             </div>
 
-            {/* Right Column: Venue & Location */}
-            <div className="lys-spec-col relative flex flex-col items-end gap-[3cqh] text-right">
-              <div {...sc(2, "clip", 0.1)} style={hidden} className="relative">
-                <div style={{ ...sans, fontSize: 8, letterSpacing: "0.25em", color: taupe, textTransform: "uppercase", marginBottom: 6 }}>
-                  Ceremony Venue
-                </div>
-                <div style={{ fontSize: "clamp(16px, 2.4cqw, 32px)", lineHeight: 1.15 }}>
-                  <span className="lys-edit" contentEditable suppressContentEditableWarning>{venue}</span>
-                </div>
-                <div style={{ fontSize: "clamp(13px, 1.6cqw, 20px)", color: taupe, marginTop: 4 }}>
-                  <span className="lys-edit" contentEditable suppressContentEditableWarning>{location}</span>
-                </div>
+            {/* BRIDE Section */}
+            <div {...sc(2, "clip", 0.35)} className="flex flex-col items-center text-center max-w-[400px]" style={hidden}>
+              <div
+                style={{
+                  ...sans,
+                  fontSize: "clamp(9px, 0.95cqw, 11px)",
+                  letterSpacing: "0.35em",
+                  textTransform: "uppercase",
+                  color: crimson,
+                  fontWeight: 600,
+                  marginBottom: 3,
+                }}
+              >
+                B R I D E
               </div>
-
-              <div {...sc(2, "clip", 0.3)} style={hidden} className="relative">
-                <div style={{ ...sans, fontSize: 8, letterSpacing: "0.25em", color: taupe, textTransform: "uppercase", marginBottom: 6 }}>
-                  Evening Celebration
-                </div>
-                <div style={{ fontSize: "clamp(14px, 1.8cqw, 22px)", lineHeight: 1.2, color: crimson }}>
-                  <span className="lys-edit" contentEditable suppressContentEditableWarning>{reception}</span>
-                </div>
+              <div
+                style={{
+                  fontFamily: DISPLAY,
+                  fontStyle: "italic",
+                  fontSize: "clamp(26px, 4.4cqw, 42px)",
+                  lineHeight: 1.15,
+                  color: bone,
+                  fontWeight: 500,
+                  marginBottom: 4,
+                }}
+              >
+                <span className="lys-edit" contentEditable suppressContentEditableWarning>
+                  {brideName}
+                </span>
+              </div>
+              <div
+                style={{
+                  fontFamily: DISPLAY,
+                  fontStyle: "italic",
+                  fontSize: "clamp(13px, 1.55cqw, 18px)",
+                  lineHeight: 1.35,
+                  color: bone,
+                  marginBottom: 2,
+                }}
+              >
+                <span className="lys-edit" contentEditable suppressContentEditableWarning>
+                  {brideParents}
+                </span>
+              </div>
+              <div
+                style={{
+                  fontFamily: DISPLAY,
+                  fontSize: "clamp(13px, 1.45cqw, 17px)",
+                  lineHeight: 1.35,
+                  color: bone,
+                  marginBottom: 2,
+                }}
+              >
+                <span className="lys-edit" contentEditable suppressContentEditableWarning>
+                  {brideHouse}
+                </span>
+              </div>
+              <div
+                style={{
+                  ...sans,
+                  fontSize: "clamp(10.5px, 1.15cqw, 13px)",
+                  color: taupe,
+                  letterSpacing: "0.1em",
+                  fontWeight: 500,
+                }}
+              >
+                <span className="lys-edit" contentEditable suppressContentEditableWarning>
+                  {bridePlace}
+                </span>
               </div>
             </div>
-          </div>
-
-          <div {...sc(2, "line", 0.5)} className="lys-spec-line absolute" style={{ ...hidden, left: "6cqw", right: "6cqw", bottom: "16cqh", height: 1, background: "#D5C6AC", transformOrigin: "left" }} />
-          <div {...sc(2, "rise", 0.6)} className="lys-spec-foot pointer-events-auto absolute text-center" style={{ ...sans, ...hidden, left: "6cqw", right: "6cqw", bottom: "10cqh", fontSize: "clamp(9px, 1.1cqw, 13px)", letterSpacing: "0.2em", textTransform: "uppercase", color: taupe }}>
-            Blessings & Traditional Kerala Sadhya Feast to Follow
           </div>
         </div>
 
