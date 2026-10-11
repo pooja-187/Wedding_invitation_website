@@ -630,7 +630,7 @@ const CSS =
   ".lys-bloom{left:7cqw!important;top:auto!important;bottom:13cqh}" +
   ".lys-fin{flex-direction:column!important;gap:3.5cqh!important;top:44cqh!important}" +
   ".lys-fin-venue{text-align:center!important}" +
-  ".lys-spec{display:flex!important;flex-direction:column!important;align-items:center!important;text-align:center!important;top:42cqh!important;bottom:auto!important;gap:2.2cqh!important;left:4cqw!important;right:4cqw!important}" +
+  ".lys-spec{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:space-evenly!important;text-align:center!important;top:39cqh!important;bottom:6cqh!important;left:4cqw!important;right:4cqw!important}" +
   ".lys-spec-col{align-items:center!important;text-align:center!important;width:100%!important;gap:2cqh!important}" +
   ".lys-spec-mid{display:none!important}" +
   ".lys-spec-line{display:none!important}" +
@@ -1404,26 +1404,25 @@ export default function LycorisSpecimen({
         {/* ============================== 2 · groom & bride ============================== */}
         <div className="pointer-events-none absolute inset-0 z-30" style={display}>
           <div
-            className="lys-spec pointer-events-auto absolute flex flex-col items-center justify-center text-center"
+            className="lys-spec pointer-events-auto absolute flex flex-col items-center justify-evenly text-center"
             style={{
               left: "4cqw",
               right: "4cqw",
-              top: "37cqh",
-              bottom: "auto",
-              gap: "clamp(8px, 1.6cqh, 20px)",
+              top: "39cqh",
+              bottom: "6cqh",
             }}
           >
             {/* GROOM Section */}
-            <div {...sc(2, "clip", 0.05)} className="flex flex-col items-center text-center max-w-[400px]" style={hidden}>
+            <div {...sc(2, "clip", 0.05)} className="flex flex-col items-center text-center max-w-[420px]" style={hidden}>
               <div
                 style={{
                   ...sans,
                   fontSize: "clamp(9px, 0.95cqw, 11px)",
-                  letterSpacing: "0.35em",
+                  letterSpacing: "0.38em",
                   textTransform: "uppercase",
                   color: crimson,
                   fontWeight: 600,
-                  marginBottom: 3,
+                  marginBottom: "0.8cqh",
                 }}
               >
                 G R O O M
@@ -1432,11 +1431,11 @@ export default function LycorisSpecimen({
                 style={{
                   fontFamily: DISPLAY,
                   fontStyle: "italic",
-                  fontSize: "clamp(26px, 4.4cqw, 42px)",
+                  fontSize: "clamp(28px, 4.6cqw, 44px)",
                   lineHeight: 1.15,
                   color: bone,
                   fontWeight: 500,
-                  marginBottom: 4,
+                  marginBottom: "1cqh",
                 }}
               >
                 <span className="lys-edit" contentEditable suppressContentEditableWarning>
@@ -1447,10 +1446,10 @@ export default function LycorisSpecimen({
                 style={{
                   fontFamily: DISPLAY,
                   fontStyle: "italic",
-                  fontSize: "clamp(13px, 1.55cqw, 18px)",
-                  lineHeight: 1.35,
+                  fontSize: "clamp(13px, 1.6cqw, 18px)",
+                  lineHeight: 1.4,
                   color: bone,
-                  marginBottom: 2,
+                  marginBottom: "0.6cqh",
                 }}
               >
                 <span className="lys-edit" contentEditable suppressContentEditableWarning>
@@ -1460,10 +1459,10 @@ export default function LycorisSpecimen({
               <div
                 style={{
                   fontFamily: DISPLAY,
-                  fontSize: "clamp(13px, 1.45cqw, 17px)",
-                  lineHeight: 1.35,
+                  fontSize: "clamp(13px, 1.5cqw, 17px)",
+                  lineHeight: 1.4,
                   color: bone,
-                  marginBottom: 2,
+                  marginBottom: "0.5cqh",
                 }}
               >
                 <span className="lys-edit" contentEditable suppressContentEditableWarning>
@@ -1475,7 +1474,7 @@ export default function LycorisSpecimen({
                   ...sans,
                   fontSize: "clamp(10.5px, 1.15cqw, 13px)",
                   color: taupe,
-                  letterSpacing: "0.1em",
+                  letterSpacing: "0.12em",
                   fontWeight: 500,
                 }}
               >
@@ -1486,23 +1485,23 @@ export default function LycorisSpecimen({
             </div>
 
             {/* Elegant Golden Line & Center Ornament Divider */}
-            <div {...sc(2, "line", 0.2)} className="flex items-center justify-center gap-3 w-40 sm:w-48 my-0.5" style={hidden}>
-              <div className="h-px bg-[#D5C6AC]/80 flex-1" />
+            <div {...sc(2, "line", 0.2)} className="flex items-center justify-center gap-3.5 w-44 sm:w-56 md:w-64 my-1 sm:my-2" style={hidden}>
+              <div className="h-px bg-[#D5C6AC]/85 flex-1" />
               <span className="text-[#800D28] text-xs font-serif select-none">❖</span>
-              <div className="h-px bg-[#D5C6AC]/80 flex-1" />
+              <div className="h-px bg-[#D5C6AC]/85 flex-1" />
             </div>
 
             {/* BRIDE Section */}
-            <div {...sc(2, "clip", 0.35)} className="flex flex-col items-center text-center max-w-[400px]" style={hidden}>
+            <div {...sc(2, "clip", 0.35)} className="flex flex-col items-center text-center max-w-[420px]" style={hidden}>
               <div
                 style={{
                   ...sans,
                   fontSize: "clamp(9px, 0.95cqw, 11px)",
-                  letterSpacing: "0.35em",
+                  letterSpacing: "0.38em",
                   textTransform: "uppercase",
                   color: crimson,
                   fontWeight: 600,
-                  marginBottom: 3,
+                  marginBottom: "0.8cqh",
                 }}
               >
                 B R I D E
@@ -1511,11 +1510,11 @@ export default function LycorisSpecimen({
                 style={{
                   fontFamily: DISPLAY,
                   fontStyle: "italic",
-                  fontSize: "clamp(26px, 4.4cqw, 42px)",
+                  fontSize: "clamp(28px, 4.6cqw, 44px)",
                   lineHeight: 1.15,
                   color: bone,
                   fontWeight: 500,
-                  marginBottom: 4,
+                  marginBottom: "1cqh",
                 }}
               >
                 <span className="lys-edit" contentEditable suppressContentEditableWarning>
@@ -1526,10 +1525,10 @@ export default function LycorisSpecimen({
                 style={{
                   fontFamily: DISPLAY,
                   fontStyle: "italic",
-                  fontSize: "clamp(13px, 1.55cqw, 18px)",
-                  lineHeight: 1.35,
+                  fontSize: "clamp(13px, 1.6cqw, 18px)",
+                  lineHeight: 1.4,
                   color: bone,
-                  marginBottom: 2,
+                  marginBottom: "0.6cqh",
                 }}
               >
                 <span className="lys-edit" contentEditable suppressContentEditableWarning>
@@ -1539,10 +1538,10 @@ export default function LycorisSpecimen({
               <div
                 style={{
                   fontFamily: DISPLAY,
-                  fontSize: "clamp(13px, 1.45cqw, 17px)",
-                  lineHeight: 1.35,
+                  fontSize: "clamp(13px, 1.5cqw, 17px)",
+                  lineHeight: 1.4,
                   color: bone,
-                  marginBottom: 2,
+                  marginBottom: "0.5cqh",
                 }}
               >
                 <span className="lys-edit" contentEditable suppressContentEditableWarning>
@@ -1554,7 +1553,7 @@ export default function LycorisSpecimen({
                   ...sans,
                   fontSize: "clamp(10.5px, 1.15cqw, 13px)",
                   color: taupe,
-                  letterSpacing: "0.1em",
+                  letterSpacing: "0.12em",
                   fontWeight: 500,
                 }}
               >
