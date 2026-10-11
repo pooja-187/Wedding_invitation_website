@@ -1241,7 +1241,7 @@ export default function LycorisSpecimen({
         {/* ================================ 1 · blessing & countdown ================================ */}
         <div className="pointer-events-none absolute inset-0 z-30" style={display}>
           {/* Top Section: Ceremony Ribbon & 3-Column Calendar */}
-          <div className="pointer-events-auto absolute left-0 right-0 flex flex-col items-center px-4" style={{ top: "3.5cqh" }}>
+          <div className="pointer-events-auto absolute left-0 right-0 flex flex-col items-center px-4" style={{ top: "clamp(44px, 7.5cqh, 70px)" }}>
             {/* Ceremony Banner */}
             <div
               {...sc(1, "fade", 0.1)}
