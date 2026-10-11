@@ -51,6 +51,11 @@ export type LycorisSpecimenProps = {
   scale?: number
   alive?: boolean
   className?: string
+  ceremonyBanner?: string
+  ceremonyDay?: string
+  ceremonyMonth?: string
+  ceremonyYear?: string
+  countdownTarget?: string
 }
 
 // #region flower
@@ -664,6 +669,11 @@ export default function LycorisSpecimen({
   scale = 1,
   alive = true,
   className = "",
+  ceremonyBanner = "28 DECEMBER 2026 · MUHURTHAM CEREMONY",
+  ceremonyDay = "28",
+  ceremonyMonth = "DEC",
+  ceremonyYear = "2026",
+  countdownTarget = "2026-12-28T10:30:00",
 }: LycorisSpecimenProps) {
   const crimson = burgundy ?? wine ?? crimsonProp ?? "#800D28"
   const rootRef = React.useRef<HTMLElement | null>(null)
@@ -675,6 +685,50 @@ export default function LycorisSpecimen({
   const [active, setActive] = React.useState(0)
   const [inspect, setInspect] = React.useState<string | null>(null)
   const [liga, setLiga] = React.useState(true)
+
+  // Live countdown calculation to target ceremony date
+  const targetTime = React.useMemo(() => {
+    try {
+      const t = new Date(countdownTarget).getTime()
+      return isNaN(t) ? new Date("2026-12-28T10:30:00").getTime() : t
+    } catch {
+      return new Date("2026-12-28T10:30:00").getTime()
+    }
+  }, [countdownTarget])
+
+  const [timeLeft, setTimeLeft] = React.useState(() => {
+    const diff = Math.max(0, new Date("2026-12-28T10:30:00").getTime() - Date.now())
+    const d = Math.floor(diff / (1000 * 60 * 60 * 24))
+    const h = Math.floor((diff / (1000 * 60 * 60)) % 24)
+    const m = Math.floor((diff / (1000 * 60)) % 60)
+    const s = Math.floor((diff / 1000) % 60)
+    return {
+      days: String(d).padStart(2, "0"),
+      hours: String(h).padStart(2, "0"),
+      mins: String(m).padStart(2, "0"),
+      secs: String(s).padStart(2, "0"),
+    }
+  })
+
+  React.useEffect(() => {
+    const update = () => {
+      const now = Date.now()
+      const diff = Math.max(0, targetTime - now)
+      const d = Math.floor(diff / (1000 * 60 * 60 * 24))
+      const h = Math.floor((diff / (1000 * 60 * 60)) % 24)
+      const m = Math.floor((diff / (1000 * 60)) % 60)
+      const s = Math.floor((diff / 1000) % 60)
+      setTimeLeft({
+        days: String(d).padStart(2, "0"),
+        hours: String(h).padStart(2, "0"),
+        mins: String(m).padStart(2, "0"),
+        secs: String(s).padStart(2, "0"),
+      })
+    }
+    update()
+    const timer = setInterval(update, 1000)
+    return () => clearInterval(timer)
+  }, [targetTime])
 
   const letters = Array.from(name)
   const firstIdx = letters.findIndex((c) => c.trim() !== "")
@@ -1184,10 +1238,150 @@ export default function LycorisSpecimen({
           </div>
         </div>
 
-        {/* ================================ 1 · blessing ================================ */}
-        <div className="pointer-events-none absolute inset-0 z-30">
-          <div {...sc(1, "rise", 0.6)} className="absolute text-center w-full" style={{ ...sans, ...hidden, left: 0, bottom: "7cqh", fontSize: "clamp(11px, 1.15cqw, 15px)", letterSpacing: "0.22em", textTransform: "uppercase", padding: "0 4cqw", color: bone, fontWeight: 500 }}>
-            <span style={{ color: crimson, fontWeight: 600 }}>Together with their families</span> — invite you to celebrate their wedding
+        {/* ================================ 1 · blessing & countdown ================================ */}
+        <div className="pointer-events-none absolute inset-0 z-30" style={display}>
+          {/* Top Section: Ceremony Ribbon & 3-Column Calendar */}
+          <div className="pointer-events-auto absolute left-0 right-0 flex flex-col items-center px-4" style={{ top: "3.5cqh" }}>
+            {/* Ceremony Banner */}
+            <div
+              {...sc(1, "fade", 0.1)}
+              className="inline-flex items-center justify-center px-4 py-1.5 md:px-6 md:py-2 rounded-full shadow-[0_2px_10px_rgba(128,13,40,0.15)]"
+              style={{
+                ...sans,
+                ...hidden,
+                background: "linear-gradient(135deg, #800D28 0%, #680B20 100%)",
+                color: "#F8F3E9",
+                fontSize: "clamp(9px, 0.95cqw, 12px)",
+                letterSpacing: "0.22em",
+                textTransform: "uppercase",
+                fontWeight: 600,
+                border: "1px solid rgba(213, 198, 172, 0.4)",
+              }}
+            >
+              <span className="lys-edit" contentEditable suppressContentEditableWarning>
+                {ceremonyBanner}
+              </span>
+            </div>
+
+            {/* Date Breakdown: DAY | MONTH | YEAR */}
+            <div
+              {...sc(1, "rise", 0.2)}
+              className="flex items-center justify-center gap-4 sm:gap-6 md:gap-8 mt-2.5 sm:mt-3"
+              style={{ ...hidden }}
+            >
+              <div className="flex flex-col items-center text-center min-w-[48px] sm:min-w-[60px]">
+                <span className="lys-edit" contentEditable suppressContentEditableWarning style={{ fontFamily: DISPLAY, fontSize: "clamp(26px, 4.2cqw, 42px)", lineHeight: 1, color: bone, fontWeight: 400 }}>
+                  {ceremonyDay}
+                </span>
+                <span style={{ ...sans, fontSize: "clamp(8px, 0.8cqw, 10px)", letterSpacing: "0.25em", color: taupe, textTransform: "uppercase", marginTop: 4, fontWeight: 600 }}>
+                  Day
+                </span>
+              </div>
+
+              <div className="h-8 md:h-10 w-px bg-[#D5C6AC]/80" />
+
+              <div className="flex flex-col items-center text-center min-w-[54px] sm:min-w-[70px]">
+                <span className="lys-edit" contentEditable suppressContentEditableWarning style={{ fontFamily: DISPLAY, fontSize: "clamp(26px, 4.2cqw, 42px)", lineHeight: 1, color: bone, fontWeight: 400 }}>
+                  {ceremonyMonth}
+                </span>
+                <span style={{ ...sans, fontSize: "clamp(8px, 0.8cqw, 10px)", letterSpacing: "0.25em", color: taupe, textTransform: "uppercase", marginTop: 4, fontWeight: 600 }}>
+                  Month
+                </span>
+              </div>
+
+              <div className="h-8 md:h-10 w-px bg-[#D5C6AC]/80" />
+
+              <div className="flex flex-col items-center text-center min-w-[54px] sm:min-w-[70px]">
+                <span className="lys-edit" contentEditable suppressContentEditableWarning style={{ fontFamily: DISPLAY, fontSize: "clamp(26px, 4.2cqw, 42px)", lineHeight: 1, color: bone, fontWeight: 400 }}>
+                  {ceremonyYear}
+                </span>
+                <span style={{ ...sans, fontSize: "clamp(8px, 0.8cqw, 10px)", letterSpacing: "0.25em", color: taupe, textTransform: "uppercase", marginTop: 4, fontWeight: 600 }}>
+                  Year
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Section: Countdown & Invitation Message */}
+          <div className="pointer-events-auto absolute left-0 right-0 flex flex-col items-center text-center px-4" style={{ bottom: "3.5cqh" }}>
+            {/* "— TOGETHER FOR —" */}
+            <div
+              {...sc(1, "fade", 0.35)}
+              style={{
+                ...sans,
+                ...hidden,
+                fontSize: "clamp(9px, 0.9cqw, 11px)",
+                letterSpacing: "0.28em",
+                textTransform: "uppercase",
+                color: crimson,
+                fontWeight: 600,
+                marginBottom: "1cqh",
+              }}
+            >
+              <span className="lys-edit" contentEditable suppressContentEditableWarning>
+                — Together For —
+              </span>
+            </div>
+
+            {/* 4 Countdown Cards: DAYS | HOURS | MINS | SECS */}
+            <div
+              {...sc(1, "rise", 0.45)}
+              className="grid grid-cols-4 gap-2 sm:gap-3 w-full max-w-[340px] sm:max-w-[400px]"
+              style={{ ...hidden, marginBottom: "2cqh" }}
+            >
+              <div className="flex flex-col items-center justify-center py-2 px-1 sm:py-2.5 sm:px-2 rounded-xl sm:rounded-2xl bg-[#FFFDF9]/95 border border-[#D5C6AC]/75 shadow-[0_4px_16px_rgba(44,32,31,0.06)]">
+                <span style={{ fontFamily: DISPLAY, fontSize: "clamp(20px, 3.8cqw, 32px)", lineHeight: 1, color: crimson, fontWeight: 500 }}>
+                  {timeLeft.days}
+                </span>
+                <span style={{ ...sans, fontSize: "clamp(7.5px, 0.75cqw, 9.5px)", letterSpacing: "0.18em", color: taupe, textTransform: "uppercase", marginTop: 4, fontWeight: 600 }}>
+                  Days
+                </span>
+              </div>
+
+              <div className="flex flex-col items-center justify-center py-2 px-1 sm:py-2.5 sm:px-2 rounded-xl sm:rounded-2xl bg-[#FFFDF9]/95 border border-[#D5C6AC]/75 shadow-[0_4px_16px_rgba(44,32,31,0.06)]">
+                <span style={{ fontFamily: DISPLAY, fontSize: "clamp(20px, 3.8cqw, 32px)", lineHeight: 1, color: crimson, fontWeight: 500 }}>
+                  {timeLeft.hours}
+                </span>
+                <span style={{ ...sans, fontSize: "clamp(7.5px, 0.75cqw, 9.5px)", letterSpacing: "0.18em", color: taupe, textTransform: "uppercase", marginTop: 4, fontWeight: 600 }}>
+                  Hours
+                </span>
+              </div>
+
+              <div className="flex flex-col items-center justify-center py-2 px-1 sm:py-2.5 sm:px-2 rounded-xl sm:rounded-2xl bg-[#FFFDF9]/95 border border-[#D5C6AC]/75 shadow-[0_4px_16px_rgba(44,32,31,0.06)]">
+                <span style={{ fontFamily: DISPLAY, fontSize: "clamp(20px, 3.8cqw, 32px)", lineHeight: 1, color: crimson, fontWeight: 500 }}>
+                  {timeLeft.mins}
+                </span>
+                <span style={{ ...sans, fontSize: "clamp(7.5px, 0.75cqw, 9.5px)", letterSpacing: "0.18em", color: taupe, textTransform: "uppercase", marginTop: 4, fontWeight: 600 }}>
+                  Mins
+                </span>
+              </div>
+
+              <div className="flex flex-col items-center justify-center py-2 px-1 sm:py-2.5 sm:px-2 rounded-xl sm:rounded-2xl bg-[#FFFDF9]/95 border border-[#D5C6AC]/75 shadow-[0_4px_16px_rgba(44,32,31,0.06)]">
+                <span style={{ fontFamily: DISPLAY, fontSize: "clamp(20px, 3.8cqw, 32px)", lineHeight: 1, color: crimson, fontWeight: 500 }}>
+                  {timeLeft.secs}
+                </span>
+                <span style={{ ...sans, fontSize: "clamp(7.5px, 0.75cqw, 9.5px)", letterSpacing: "0.18em", color: taupe, textTransform: "uppercase", marginTop: 4, fontWeight: 600 }}>
+                  Secs
+                </span>
+              </div>
+            </div>
+
+            {/* Bottom Invitation Message */}
+            <div
+              {...sc(1, "rise", 0.6)}
+              className="w-full text-center"
+              style={{
+                ...sans,
+                ...hidden,
+                fontSize: "clamp(10px, 1.05cqw, 13px)",
+                letterSpacing: "0.22em",
+                textTransform: "uppercase",
+                color: bone,
+                fontWeight: 500,
+              }}
+            >
+              <span style={{ color: crimson, fontWeight: 600 }}>Together with their families</span> — invite you to celebrate their wedding
+            </div>
           </div>
         </div>
 
